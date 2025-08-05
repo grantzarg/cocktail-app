@@ -12,6 +12,7 @@ const CATEGORIES: CocktailCategory[] = [
 
 export const useCocktailStore = defineStore('cocktail', () => {
   const cocktails = ref<Cocktail[]>([])
+  const cache = ref<Partial<Record<CocktailCode, Cocktail[]>>>({})
 
   const isLoading = ref(false)
   const error = ref<string | null>(null)
@@ -26,12 +27,19 @@ export const useCocktailStore = defineStore('cocktail', () => {
   const hasError = computed(() => error.value !== null)
 
   const fetchCocktails = async (code: CocktailCode) => {
+
+    if (cache.value[code]) {
+      cocktails.value = cache.value[code]!
+      return
+    }
+
     isLoading.value = true
     error.value = null
 
     try {
       const data = await getCocktailsByCode(code)
       cocktails.value = data
+      cache.value[code] = data // Сохраняем в кеш
     } catch (err) {
       error.value = (err as Error)?.message ?? 'Error loading cocktails'
     } finally {
@@ -64,6 +72,15 @@ export const useCocktailStore = defineStore('cocktail', () => {
     fetchCocktails(activeCategory.value)
   }
 
+  const clearCache = () => {
+    cache.value = {}
+  }
+
+  const refreshCategory = async (code: CocktailCode) => {
+    delete cache.value[code] 
+    await fetchCocktails(code)
+  }
+
   return {
     cocktails,
     isLoading,
@@ -83,5 +100,7 @@ export const useCocktailStore = defineStore('cocktail', () => {
     closeMobileNav,
     clearError,
     retryLoad,
+    clearCache,
+    refreshCategory,
   }
 })
