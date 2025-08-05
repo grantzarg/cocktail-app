@@ -3,6 +3,13 @@ import { ref, computed } from 'vue'
 import type { Cocktail, CocktailCode, CocktailCategory } from '@/types/cocktail'
 import { getCocktailsByCode } from '@/services/cocktailApi'
 
+const CATEGORIES: CocktailCategory[] = [
+  { code: 'margarita', name: 'Margarita' },
+  { code: 'mojito', name: 'Mojito' },
+  { code: 'a1', name: 'A1' },
+  { code: 'kir', name: 'Kir' },
+]
+
 export const useCocktailStore = defineStore('cocktail', () => {
   const cocktails = ref<Cocktail[]>([])
 
@@ -15,13 +22,6 @@ export const useCocktailStore = defineStore('cocktail', () => {
 
   const isMobileNavOpen = ref(false)
 
-  const categories: CocktailCategory[] = [
-    { code: 'margarita', name: 'Margarita' },
-    { code: 'mojito', name: 'Mojito' },
-    { code: 'a1', name: 'A1' },
-    { code: 'kir', name: 'Kir' },
-  ]
-
   const hasCocktails = computed(() => cocktails.value.length > 0)
   const hasError = computed(() => error.value !== null)
 
@@ -30,13 +30,10 @@ export const useCocktailStore = defineStore('cocktail', () => {
     error.value = null
 
     try {
-      console.log(`Загружаем коктейли для: ${code}`)
       const data = await getCocktailsByCode(code)
-      console.log(`Получено коктейлей: ${data.length}`)
       cocktails.value = data
     } catch (err) {
-      console.error('Ошибка загрузки коктейлей:', err)
-      error.value = err instanceof Error ? err.message : 'Произошла ошибка при загрузке коктейлей'
+      error.value = (err as Error)?.message ?? 'Error loading cocktails'
     } finally {
       isLoading.value = false
     }
@@ -51,11 +48,7 @@ export const useCocktailStore = defineStore('cocktail', () => {
     theme.value = theme.value === 'light' ? 'dark' : 'light'
   }
 
-  const setTheme = (newTheme: 'light' | 'dark') => {
-    theme.value = newTheme
-  }
-
-  const toggleMobileNav = () => {
+  const toggleMobileNavMenu = () => {
     isMobileNavOpen.value = !isMobileNavOpen.value
   }
 
@@ -78,7 +71,7 @@ export const useCocktailStore = defineStore('cocktail', () => {
     theme,
     activeCategory,
     isMobileNavOpen,
-    categories,
+    categories: CATEGORIES,
 
     hasCocktails,
     hasError,
@@ -86,8 +79,7 @@ export const useCocktailStore = defineStore('cocktail', () => {
     fetchCocktails,
     setActiveCategory,
     toggleTheme,
-    setTheme,
-    toggleMobileNav,
+    toggleMobileNavMenu,
     closeMobileNav,
     clearError,
     retryLoad,

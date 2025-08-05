@@ -23,7 +23,7 @@
           <div class="mobile-nav">
             <button
               class="mobile-nav-toggle"
-              @click="cocktailStore.toggleMobileNav"
+              @click="cocktailStore.toggleMobileNavMenu"
               :class="{ active: isMobileNavOpen }"
             >
               <svg
@@ -100,7 +100,7 @@ import { useRoute } from 'vue-router'
 import { useCocktailStore } from '@/stores/cocktail'
 import CocktailCard from '@/components/CocktailCard.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
-import ThemeToggle from '@/components/ThemeToggle.vue'
+import ThemeToggle from '@/components/ThemeToggler.vue'
 import type { CocktailCode } from '@/types/cocktail'
 
 interface Props {

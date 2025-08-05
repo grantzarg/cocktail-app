@@ -21,8 +21,6 @@ export async function api<T = unknown>(
       finalUrl = `${url}?${params.toString()}`
     }
 
-    console.log(`API запрос: ${method} ${finalUrl}`)
-
     const config: RequestInit = {
       method,
       headers: {
@@ -49,11 +47,9 @@ export async function api<T = unknown>(
     }
 
     const data = await response.json()
-    console.log('API ответ:', data)
 
     return data as T
   } catch (error) {
-    console.error('API ошибка:', error)
     throw error
   }
 }
