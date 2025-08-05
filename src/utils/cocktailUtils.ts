@@ -1,4 +1,4 @@
-import type { Cocktail, IngredientKey, MeasureKey } from '@/types/cocktail'
+import type { Cocktail } from '@/types/cocktail'
 
 const MAX_INGREDIENTS = 15
 
@@ -8,27 +8,12 @@ export interface Ingredient {
 }
 
 export function extractIngredients(cocktail: Cocktail): Ingredient[] {
-  const ingredients: Ingredient[] = []
-
-  let i = 1
-  while (i <= MAX_INGREDIENTS) {
-    const ingredientKey: IngredientKey = `strIngredient${i}`
-    const measureKey: MeasureKey = `strMeasure${i}`
-
-    const ingredient = cocktail[ingredientKey]
-    const measure = cocktail[measureKey]
-
-    if (ingredient && ingredient.trim()) {
-      ingredients.push({
-        name: ingredient.trim(),
-        measure: measure?.trim() ?? null,
-      })
-    } else {
-      break
-    }
-
-    i++
-  }
-
-  return ingredients
+  return Array.from({ length: MAX_INGREDIENTS }, (_, i) => {
+    const num = i + 1
+   
+    const name = cocktail[`strIngredient${num}` as keyof Cocktail]?.trim()
+    const measure = cocktail[`strMeasure${num}` as keyof Cocktail]?.trim()
+    
+    return name ? { name, measure: measure ?? null } : null
+  }).filter((item): item is Ingredient => item !== null)
 }
