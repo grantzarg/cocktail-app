@@ -33,7 +33,7 @@
 
 ### Vercel
 - Автоматический деплой при пуше в main
-- URL: `https://your-app.vercel.app/`
+- URL: `https://cocktail-app-six.vercel.app/`
 
 ## Скрипты
 
